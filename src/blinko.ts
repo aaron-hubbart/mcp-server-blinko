@@ -34,6 +34,14 @@ export interface ShareNoteParams {
   password?: string;
 }
 
+export interface DeleteNoteParams {
+  id: number;
+}
+
+export interface DeleteNoteResult {
+  id: number;
+}
+
 export interface ShareNoteResult {
   id: number;
   isShare: boolean;
@@ -236,6 +244,37 @@ export class BlinkoClient {
         isShare: result.isShare,
         sharePassword: result.sharePassword,
         shareEncryptedUrl: result.shareEncryptedUrl,
+      };
+    } catch (e) {
+      throw e;
+    }
+
+      /**
+   * Share a note or cancel sharing.
+   * @param params - Share parameters including note ID and optional password
+   * @returns The result of the share operation
+   */
+  async deleteNote(params: DeleteNoteParams): Promise<DeleteNoteResult> {
+    try {
+      const apiUrl = `${this.baseUrl}/api/v1/note/params.id`;
+      
+      const resp = await fetch(apiUrl, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify(reqBody),
+      });
+
+      if (!resp.ok) {
+        const errorText = await resp.text();
+        throw new Error(`request failed with status ${resp.status}: ${errorText}`);
+      }
+
+      const result = await resp.json();
+      return {
+        id: result.id,
       };
     } catch (e) {
       throw e;
