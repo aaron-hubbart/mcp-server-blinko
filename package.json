@@ -1,10 +1,10 @@
 {
-  "name": "mcp-server-blinko",
-  "version": "0.0.9",
+  "name": "mcp-server-blinko-ah",
+  "version": "0.1.0",
   "description": "MCP server for interacting with Blinko note service",
   "private": false,
   "type": "module",
-  "homepage": "https://github.com/BryceWG/mcp-server-blinko",
+  "homepage": "https://github.com/aaron-hubbart/mcp-server-blinko",
   "bin": {
     "mcp-server-blinko": "build/index.js"
   },
