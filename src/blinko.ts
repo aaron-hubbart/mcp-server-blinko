@@ -264,7 +264,6 @@ export class BlinkoClient {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${this.apiKey}`,
         },
-        body: JSON.stringify(reqBody),
       });
 
       if (!resp.ok) {
