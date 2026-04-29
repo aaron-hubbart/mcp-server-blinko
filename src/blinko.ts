@@ -257,13 +257,14 @@ export class BlinkoClient {
   }
   
    /**
-   * Delete a note.
+   * Move a note to recycle bin (trash).
    * @param params - Delete parameters including note ID
-   * @returns The result of the delete operation
+   * @returns The result of the operation
    */
   async deleteNote(params: DeleteNoteParams): Promise<DeleteNoteResult> {
     try {
-      const apiUrl = `${this.baseUrl}/api/v1/note/batch-delete`;
+      // Use batch-trash to move note to recycle bin (safer than permanent delete)
+      const apiUrl = `${this.baseUrl}/api/v1/note/batch-trash`;
       
       const resp = await fetch(apiUrl, {
         method: "POST",
@@ -281,15 +282,14 @@ export class BlinkoClient {
         throw new Error(`request failed with status ${resp.status}: ${errorText}`);
       }
 
-      // Blinko batch-delete returns null on success
+      // Blinko batch-trash returns null on success
       const result = await resp.json();
       
-      // On success, result is null. Return the deleted ID.
+      // On success, result is null. Return the trashed ID.
       if (result === null) {
         return { id: params.id };
       }
       
-      // Handle any other response format
       return { id: params.id };
     } catch (e) {
       throw e;

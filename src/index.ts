@@ -112,13 +112,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "delete_blinko",
-        description: "Delete a note (any type) in Blinko.",
+        description: "Move a note to the recycle bin in Blinko. The note can be restored from the recycle bin. Use noteId to identify which note to trash.",
         inputSchema: {
           type: "object",
           properties: {
             noteId: {
               type: "number",
-              description: "ID of the note to delete. Use the ID from search results or note creation responses.",
+              description: "ID of the note to move to recycle bin. Use the ID from search results or note creation responses.",
             }
           },
           required: ["noteId"],
@@ -429,7 +429,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         content: [
           {
             type: "text",
-            text: `Successfully deleted note (ID: ${result.id})`,
+            text: `Successfully moved note to recycle bin (ID: ${result.id})`,
           },
         ],
       };
