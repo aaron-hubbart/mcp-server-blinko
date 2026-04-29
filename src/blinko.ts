@@ -256,14 +256,17 @@ export class BlinkoClient {
    */
   async deleteNote(params: DeleteNoteParams): Promise<DeleteNoteResult> {
     try {
-      const apiUrl = `${this.baseUrl}/api/v1/note/${params.id}`;
+      const apiUrl = `${this.baseUrl}/api/v1/note/batch-delete`;
       
       const resp = await fetch(apiUrl, {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${this.apiKey}`,
         },
+        body: JSON.stringify({
+          ids: [params.id]
+        })
       });
 
       if (!resp.ok) {
