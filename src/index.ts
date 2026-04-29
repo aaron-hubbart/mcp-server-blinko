@@ -109,7 +109,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description: "ID of the note to delete. Use the ID from search results or note creation responses.",
             }
           },
-          required: ["content"],
+          required: ["noteId"],
         },
       },
       {
@@ -408,8 +408,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         id: noteId,
       });
       
-      if (!result.success) {
-        throw new Error(`Failed to delete note (ID: ${result.id})`);
+      if (!result.id) {
+        throw new Error(`Failed to delete note.`);
       }
 
       return {
