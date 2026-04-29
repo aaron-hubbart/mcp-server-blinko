@@ -99,6 +99,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
+        name: "delete_blinko",
+        description: "Delete a note (any type) in Blinko.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            noteId: {
+              type: "number",
+              description: "ID of the note to delete. Use the ID from search results or note creation responses.",
+            }
+          },
+          required: ["content"],
+        },
+      },
+      {
         name: "share_blinko_note",
         description: "Share a note publicly or cancel an existing share. Creates a public link that others can access, optionally protected with a password.",
         inputSchema: {
@@ -384,6 +398,30 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
     }
 
+    case "delete_blinko": {
+      const noteId = Number(request.params.arguments?.noteId);
+      if (!noteId || isNaN(noteId)) {
+        throw new Error("Valid note ID is required");
+      }
+
+      const result = await blinko.deleteNote({
+        id: noteId,
+      });
+      
+      if (!result.success) {
+        throw new Error(`Failed to delete note (ID: ${result.id})`);
+      }
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Successfully deleted Blinko. (ID: ${result.id})`,
+          },
+        ],
+      };
+    }
+      
     case "clear_blinko_recycle_bin": {
       const result = await blinko.clearRecycleBin();
 
