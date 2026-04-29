@@ -248,7 +248,7 @@ export class BlinkoClient {
     } catch (e) {
       throw e;
     }
-
+  }
       /**
    * Share a note or cancel sharing.
    * @param params - Share parameters including note ID and optional password
@@ -281,3 +281,7 @@ export class BlinkoClient {
     }
   }
 }
+
+
+
+
