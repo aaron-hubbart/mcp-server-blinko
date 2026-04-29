@@ -425,15 +425,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         id: noteId,
       });
       
-      if (!result.id) {
-        throw new Error(`Failed to delete note.`);
-      }
-
       return {
         content: [
           {
             type: "text",
-            text: `Successfully deleted Blinko. (ID: ${result.id})`,
+            text: `Successfully deleted note (ID: ${result.id})`,
           },
         ],
       };

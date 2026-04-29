@@ -281,10 +281,16 @@ export class BlinkoClient {
         throw new Error(`request failed with status ${resp.status}: ${errorText}`);
       }
 
+      // Blinko batch-delete returns null on success
       const result = await resp.json();
-      return {
-        id: result.id,
-      };
+      
+      // On success, result is null. Return the deleted ID.
+      if (result === null) {
+        return { id: params.id };
+      }
+      
+      // Handle any other response format
+      return { id: params.id };
     } catch (e) {
       throw e;
     }
