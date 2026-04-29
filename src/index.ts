@@ -39,8 +39,8 @@ const apiKey = args.blinko_api_key || process.env.BLINKO_API_KEY || "";
  */
 const server = new Server(
   {
-    name: "mcp-server-blinko",
-    version: "0.0.1",
+    name: "mcp-server-blinko-ah",
+    version: "0.1.2",
   },
   {
     capabilities: {
@@ -58,13 +58,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: "upsert_blinko_flash_note",
-        description: "Create or update a flash note (type 0) in Blinko. Flash notes are designed for quick thoughts, ideas, or brief observations that you want to capture rapidly.",
+        description: "Create or update a flash note (type 0) in Blinko. Flash notes are designed for quick thoughts, ideas, or brief observations that you want to capture rapidly. Use noteId to update an existing note.",
         inputSchema: {
           type: "object",
           properties: {
             content: {
               type: "string",
               description: "Text content of the note",
+            },
+            noteId: {
+              type: "number",
+              description: "Optional ID of an existing note to update. If not provided, a new note will be created.",
             },
           },
           required: ["content"],
@@ -72,7 +76,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "upsert_blinko_note",
-        description: "Create or update a normal note (type 1) in Blinko. Normal notes are suitable for detailed content, longer thoughts, documentation, or structured information.",
+        description: "Create or update a normal note (type 1) in Blinko. Normal notes are suitable for detailed content, longer thoughts, documentation, or structured information. Use noteId to update an existing note.",
         inputSchema: {
           type: "object",
           properties: {
@@ -80,19 +84,27 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: "string",
               description: "Text content of the note",
             },
+            noteId: {
+              type: "number",
+              description: "Optional ID of an existing note to update. If not provided, a new note will be created.",
+            },
           },
           required: ["content"],
         },
       },
       {
         name: "upsert_blinko_todo",
-        description: "Create or update a todo note (type 2) in Blinko. Todo notes are designed for task management, checklists, and action items that need to be tracked and completed.",
+        description: "Create or update a todo note (type 2) in Blinko. Todo notes are designed for task management, checklists, and action items that need to be tracked and completed. Use noteId to update an existing note.",
         inputSchema: {
           type: "object",
           properties: {
             content: {
               type: "string",
               description: "Text content of the todo",
+            },
+            noteId: {
+              type: "number",
+              description: "Optional ID of an existing note to update. If not provided, a new note will be created.",
             },
           },
           required: ["content"],
@@ -221,6 +233,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     case "upsert_blinko_note":
     case "upsert_blinko_todo": {
       const content = String(request.params.arguments?.content);
+      const noteId = request.params.arguments?.noteId;
       if (!content) {
         throw new Error("Content is required");
       }
@@ -233,13 +246,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       } else {
         type = 2; 
       }
-      const note = await blinko.upsertNote({ content, type: type as 0 | 1 | 2 });
+      const note = await blinko.upsertNote({ 
+        content, 
+        type: type as 0 | 1 | 2,
+        id: noteId ? Number(noteId) : undefined
+      });
 
       return {
         content: [
           {
             type: "text",
-            text: `Successfully wrote note to Blinko. Note ID: ${note.id}`,
+            text: noteId ? `Successfully updated note in Blinko. Note ID: ${note.id}` : `Successfully wrote note to Blinko. Note ID: ${note.id}`,
           },
         ],
       };

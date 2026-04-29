@@ -179,16 +179,22 @@ export class BlinkoClient {
    * Upsert a note to Blinko.
    * @param content - The content of the note.
    * @param type - 0 for flash note, 1 for normal note.
+   * @param id - Optional ID for updating an existing note.
    * @returns The created/updated note.
    */
-  async upsertNote({ content, type = 0 }: { content: string; type?: 0 | 1 | 2 }): Promise<Note> {
+  async upsertNote({ content, type = 0, id }: { content: string; type?: 0 | 1 | 2; id?: number }): Promise<Note> {
     try {
       if (!content) {
         throw new Error("invalid content");
       }
 
       const apiUrl = `${this.baseUrl}/api/v1/note/upsert`;
-      const reqBody = { content, type };
+      const reqBody: { content: string; type: number; id?: number } = { content, type };
+      
+      // Include id if provided for updating existing note
+      if (id !== undefined) {
+        reqBody.id = id;
+      }
 
       const resp = await fetch(apiUrl, {
         method: "POST",
@@ -249,10 +255,11 @@ export class BlinkoClient {
       throw e;
     }
   }
-      /**
-   * Share a note or cancel sharing.
-   * @param params - Share parameters including note ID and optional password
-   * @returns The result of the share operation
+  
+   /**
+   * Delete a note.
+   * @param params - Delete parameters including note ID
+   * @returns The result of the delete operation
    */
   async deleteNote(params: DeleteNoteParams): Promise<DeleteNoteResult> {
     try {
